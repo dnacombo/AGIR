@@ -183,7 +183,7 @@ for ii=1:length(beats)
     end
 end
 
-mHB = mean(HB,1);
+mHB = nanmean(HB,1);
 
 % we'll assume that signal at dt seconds before detected R-peaks should be
 % lower than R-peaks. 50 ms seems reasonable.
