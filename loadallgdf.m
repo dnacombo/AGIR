@@ -55,7 +55,7 @@ tb = tb([tb.value == 30] | tb.value == 68 | tb.value == 240,:);
 list_trig = list_trig([list_trig == 30] | list_trig == 68 | list_trig == 240 | list_trig == 240);
 if not(isequal(tb.value',list_trig))
     disp('Warning: some triggers missing?!? Attempting a repair...')
-    
+    keyboard
     
 end
 
