@@ -15,7 +15,7 @@ save_each = 0; % whether or not to save one file per block.
 % datadir = fullfile('C:\Users\Clémence\Desktop\pipeline_clemence');
 datadir = fullfile('/media/max/DATADISK/AGIR_data');
 
-participant = 'participant8';
+participant = 'participant7';
 
 [fs,x,event,C] = loadallgdf(datadir,participant);
 
