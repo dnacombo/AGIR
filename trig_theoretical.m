@@ -47,8 +47,8 @@ number_of_blocks_per_sequence = 9;
 list_trig = [];
 
 for this_block = 1 : size(C, 2)
-            total_trial = size(C{this_block}, col_nb_total_trial);
-
+    total_trial = size(C{this_block}, col_nb_total_trial);
+    
     
     if this_block == 1
         list_trig = [list_trig, trigger_6];
@@ -61,17 +61,17 @@ for this_block = 1 : size(C, 2)
             list_trig = [list_trig, trigger_4];
         end
     end
-        
+    
     if mod(this_block, number_of_blocks_per_sequence) ==  0; % for the stop session message
         list_trig = [list_trig, trigger_6];
-    end    
+    end
     
     for this_trial = 1 : 10*(C{this_block}(col_nb_total_trial))
         
         if this_trial == 1
-            list_trig = [list_trig, trigger_7];            
+            list_trig = [list_trig, trigger_7];
         end
-                
+        
         Trial_Type = C{this_block}(this_trial, col_this_trial_type);
         
         if C{this_block}(this_trial, col_what_proportion_tells_type) ==1;
@@ -87,21 +87,21 @@ for this_block = 1 : size(C, 2)
                 type_of_this_trial = 1; % active
             end
         end
-    
-    if type_of_this_trial == 1  %active
-        list_trig = [list_trig, trigger_10];
         
+        if type_of_this_trial == 1  %active
+            list_trig = [list_trig, trigger_10];
+            
+        end
+        
+        if type_of_this_trial == 2  % passive
+            list_trig = [list_trig, trigger_8];
+            list_trig = [list_trig, trigger_9];
+        end
+        
+        if this_trial == total_trial
+            list_trig = [list_trig, trigger_15];
+        end
     end
-    
-    if type_of_this_trial == 2  % passive
-        list_trig = [list_trig, trigger_8];
-        list_trig = [list_trig, trigger_9];
-    end
-    
-    if this_trial == total_trial
-        list_trig = [list_trig, trigger_15];        
-    end
-end
     
     
     %% scale

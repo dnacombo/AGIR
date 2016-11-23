@@ -3,19 +3,20 @@ clear
 clc;
 
 addpath(fullfile(cd,'general'))
+addpath(fullfile(cd,'heart'))
 addpath(fullfile(cd,'general','firfilt1.6.1'))
 addpath(fullfile(cd,'general', 'plot'))
 addpath(fullfile(cd,'fieldtrip'))
 ft_defaults
 
-doplots = 1; % whether or not we're going to give visual feedback.
+doplots = 0; % whether or not we're going to give visual feedback.
 save_each = 0; % whether or not to save one file per block.
 
 % choose yours
 % datadir = fullfile('C:\Users\Clémence\Desktop\pipeline_clemence');
 datadir = fullfile('/media/max/DATADISK/AGIR_data');
 
-participant = 'participant7';
+participant = 'participant22';
 
 [fs,x,event,C] = loadallgdf(datadir,participant);
 
@@ -125,20 +126,23 @@ for this_block = 1:size(blocks_def,1)
     % block definition : take a large data which will be usefull for all
     % later analysis with HB. We want to be sure to get the HB before and
     % after the block as well
-    low_bound = blocks_def(this_block, 1 ) - 2*fs - 7*fs; %% 7 + 2s before the blocks begin, for asycnrhoneous conditions
+    % 7 + 2s before the blocks begin, for asycnrhoneous conditions
+    % if this brings us before first sample we use 1
+    low_bound = max(1,blocks_def(this_block, 1 ) - 2*fs - 7*fs); 
     high_bound =  blocks_def(this_block, 2) + 2*fs; %% 1s after the block ends, for later normalization of intervals according to IBI
     data_sample_heart = x(2,[low_bound : high_bound]);
     
     % HB peak detection
     cfg = [];
-    cfg.downsample = 'yes';
+    cfg.downsample = 'no';
     cfg.downrate = 300;
     cfg.fsample = fs;
     cfg.hplocut = 1;
     cfg.plotthresh = doplots;
     cfg.plotcorr = doplots;
     
-    [HB_det_raw_signal] = heart_peak_detect(data_sample_heart,cfg); %%  R peaks in this data sample
+    [HB_det_raw_signal] = heart_peak_detect(cfg,data_sample_heart); %%  R peaks in this data sample
+    HB_det_raw_signal = [HB_det_raw_signal.R_sample];
     % [HB_det_raw_signal_old] = heart_peak_detection_old2(data_sample_heart,fs); %%  R peaks in this data sample
     % below is done within heart_peak_detect
     % HB_det_raw_signal_old = round(HB_det_raw_signal_old*fs/300); % resample with original sampling
@@ -425,14 +429,25 @@ for this_block = 1:size(blocks_def,1)
         waitfor(gcf)
     end
     
+    
+    % cle: adding Victor's flow_flips
+    list_IFI = [];
+    for i = 1 : size(C{this_block},1) - 1
+        list_IFI = [list_IFI, C{this_block}(i+1, 6) - C{this_block}(i, 6) ];
+    end
+    nb_HBflip_skipped = sum(list_IFI>1.33);%% considering if the interval between 2 flips exceeds 1.3 s, then at least one HB was skipped
+    % cle: adding sum() so we get the nb.
+    
     BigTable(end+1).suj = participant;
     BigTable(end).block = this_block;
     BigTable(end).HB_missed_online = eff_nb_of_missed_HB;
     BigTable(end).HB_error_prop = eff_proportion_det_HB;
+    BigTable(end).nb_HBflip_skipped = nb_HBflip_skipped;
     BigTable(end).mvt_missed = mvt_miss;
     BigTable(end).mvt_unexp = mvt_unexp;
     BigTable(end).synch_HB_flips = synchronicity_HB_flips;
     BigTable(end).synch_HB_mvt = synchronicity_HB_mvt;
+    BigTable(end).sync_def_was_ok = C{this_block}(1,9);
     
     if save_each
         vars = who;
