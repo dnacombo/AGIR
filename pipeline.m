@@ -14,7 +14,7 @@ save_each = 0; % whether or not to save one file per block.
 
 % choose yours
 % datadir = fullfile('C:\Users\Clémence\Desktop\pipeline_clemence');
-datadir = fullfile('/media/max/DATADISK/AGIR_data');
+datadir = fullfile('/media/max/LNCsave/Victor/AGIR_data');
 
 participant = 'participant22';
 
