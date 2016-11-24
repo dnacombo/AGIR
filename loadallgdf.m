@@ -15,9 +15,7 @@ switch participant
     case 'participant22'
         fs(regexpcell(fs,'x')) = [];% remove two _x_ files which were defect
         % remove blocks 55 to last
-        C(53:end) = [];
-        lastevent = 240;
-        error('still not working')
+        C(54:end) = [];
     otherwise
         fs(~emptycells(strfind(fs,'S7'))) = [];% remove S7
 end
@@ -62,6 +60,10 @@ if not(ismember(250,[alldata.event.value]))
 end
 
 event = alldata.event;
+if strcmp(participant,'participant22')
+    event = event(1:10045);
+    event(end).value = 220;
+end
 % figure;hist([event.value],1:255)
 % xtick(unique([event.value]))
 % xticklabel(unique([event.value]))
@@ -76,12 +78,7 @@ if size(received_triggs,1) > numel(expected_triggs)
 end
     
 if not(isequal(received_triggs.value',expected_triggs))
-    col_nb_total_trial=1;
     col_sync=2;
-    col_percentage = 3;
-    col_this_trial_type = 4;
-    col_what_proportion_tells_type = 5;
-    iblock = 0;
     i_received = 1;
     i_block = 0;
     currsync = 68; % by default premier run est sync
